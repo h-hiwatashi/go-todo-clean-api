@@ -1,0 +1,68 @@
+version: "3.9"
+
+# コンテナの設定
+services:
+  web:
+    container_name: go_todo_clean_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # ホスト側のフォルダをマウントする
+    volumes:
+      - .:/app
+    working_dir: /app
+    tty: true
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    # NOTE: .envだけではgoの環境変数が読み込まれなかったため明示的に記載。
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE_USER: ${MYSQL_DATABASE_USER}
+      MYSQL_DATABASE_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
+
+  mysql:
+    image: mysql:8.3
+    container_name: ${MYSQL_DATABASE}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --sql-mode=ONLY_FULL_GROUP_BY,NO_ENGINE_SUBSTITUTION
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE_USER: ${MYSQL_DATABASE_USER}
+      MYSQL_DATABASE_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
+      # タイムゾーン
+      TZ: "Asia/Tokyo"
+    # ホスト側のフォルダをマウントする
+    volumes:
+      - ./createTable.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD"
+      timeout: 5s
+      retries: 10
+
+  # TODO: tbls導入
+  # tbls:
+  #   image: ghcr.io/k1low/tbls
+  #   working_dir: /db
+  #   volumes:
+  #   - ./db/:/db
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+  #   env_file:
+  #     - .env
+  #   entrypoint: tbls doc --rm-dist mysql://${MYSQL_ROOT_USER}:${MYSQL_ROOT_PASSWORD}@${MYSQL_HOST}:${MYSQL_DATABASE_PORT}/${MYSQL_DATABASE}
+
+# ボリュームの作成
+volumes:
+  db-volume:
