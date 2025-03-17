@@ -5,15 +5,14 @@ import (
 	"log"
 	"os"
 
+	"github.com/h-hiwatashi/go-todo-clean-api/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
-	"github.com/h-hiwatashi/go-todo-clean-api/models"
 )
 
 var (
-	dbUser     = os.Getenv("MYSQL_DATABASE_USER")
-	dbPassword = os.Getenv("MYSQL_DATABASE_PASSWORD")
+	dbUser     = os.Getenv("MYSQL_USER")
+	dbPassword = os.Getenv("MYSQL_PASSWORD")
 	dbDatabase = os.Getenv("MYSQL_DATABASE")
 	dbConn     = fmt.Sprintf(
 		"%s:%s@tcp(mysql:3306)/%s?parseTime=true",
@@ -25,7 +24,6 @@ var (
 
 func main() {
 	// 1. サーバー全体で使用する sql.DB 型を一つ生成する。
-	// db, err := sql.Open("mysql", dbConn)
 	db, err := gorm.Open(mysql.Open(dbConn), &gorm.Config{})
 	if err != nil {
 		log.Println("fail to connect DB")
@@ -34,7 +32,13 @@ func main() {
 	}
 
 	// db を migrate する。
-	db.AutoMigrate(&models.Todo{}, &models.Comment{})
+	// GORM はテーブルが存在しない場合、新規作成する。
+	err = db.AutoMigrate(&models.Todo{}, &models.Comment{})
+	if err != nil {
+		log.Println("fail to migrate DB")
+		log.Println(err.Error())
+		return
+	}
 
 	// 4. コントローラ型 MyAppController のハンドラメソッドとパスとの関連付けを行う。
 	// r := api.NewRouter(db)

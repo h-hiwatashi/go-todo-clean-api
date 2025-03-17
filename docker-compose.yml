@@ -22,8 +22,8 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE_USER: ${MYSQL_DATABASE_USER}
-      MYSQL_DATABASE_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
+      MYSQL_USER: ${MYSQL_DATABASE_USER}
+      MYSQL_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
 
   mysql:
     image: mysql:8.3
@@ -38,13 +38,14 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_ROOT_USER: ${MYSQL_ROOT_USER}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE_USER: ${MYSQL_DATABASE_USER}
-      MYSQL_DATABASE_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
+      # 一般ユーザーを作成
+      MYSQL_USER: ${MYSQL_DATABASE_USER}
+      MYSQL_PASSWORD: ${MYSQL_DATABASE_PASSWORD}
       # タイムゾーン
       TZ: "Asia/Tokyo"
     # ホスト側のフォルダをマウントする
-    volumes:
-      - ./createTable.sql:/docker-entrypoint-initdb.d/init.sql
+    # volumes:
+    #   - ./createTable.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD"
       timeout: 5s

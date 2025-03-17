@@ -4,7 +4,7 @@ intogo:
 
 .PHONY: intodb
 intodb:
-	docker container exec -it mysql bash
+	docker container exec -it todo_api_mysql bash
 
 # 初回起動
 .PHONY: upd
