@@ -70,7 +70,6 @@ func (c *TodoController) HelloHandler(w http.ResponseWriter, req *http.Request) 
 
 // POST /todo のハンドラ
 func (c *TodoController) PostTodoHandler(w http.ResponseWriter, req *http.Request) {
-	//Todo 型の変数 reqTodo の中に、 reqBodybuffer に格納された json バイト列をデコードした結果を格納
 	var reqTodo models.Todo
 	println(req.Body)
 	if err := json.NewDecoder(req.Body).Decode(&reqTodo); err != nil {
