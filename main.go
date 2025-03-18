@@ -25,7 +25,7 @@ var (
 )
 
 func main() {
-	// 1. サーバー全体で使用する sql.DB 型を一つ生成する。
+	// 1. サーバー全体で使用する gorm.DB 型を一つ生成する。
 	db, err := gorm.Open(mysql.Open(dbConn), &gorm.Config{})
 	if err != nil {
 		log.Println("fail to connect DB")
