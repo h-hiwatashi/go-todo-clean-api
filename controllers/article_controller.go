@@ -109,18 +109,18 @@ func (c *TodoController) TodoDetailHandler(w http.ResponseWriter, req *http.Requ
 	json.NewEncoder(w).Encode(todo)
 }
 
-// // POST /todo/nice の挙動確認用
-// func (c *TodoController) PostNiceHandler(w http.ResponseWriter, req *http.Request) {
-// 	var reqTodo models.Todo
-// 	if err := json.NewDecoder(req.Body).Decode(&reqTodo); err != nil {
-// 		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
-// 		apperrors.ErrorHandler(w, req, err)
-// 	}
+// POST /todo/nice の挙動確認用
+func (c *TodoController) PostNiceHandler(w http.ResponseWriter, req *http.Request) {
+	var reqTodo models.Todo
+	if err := json.NewDecoder(req.Body).Decode(&reqTodo); err != nil {
+		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
+		apperrors.ErrorHandler(w, req, err)
+	}
 
-// 	todo, err := c.service.PostNiceService(reqTodo)
-// 	if err != nil {
-// 		apperrors.ErrorHandler(w, req, err)
-// 		return
-// 	}
-// 	json.NewEncoder(w).Encode(todo)
-// }
+	todo, err := c.service.PostNiceService(reqTodo)
+	if err != nil {
+		apperrors.ErrorHandler(w, req, err)
+		return
+	}
+	json.NewEncoder(w).Encode(todo)
+}

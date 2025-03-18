@@ -62,22 +62,22 @@ func (s *MyAppService) PostTodoService(todo models.Todo) (models.Todo, error) {
 // 	return todoList, nil
 // }
 
-// // PostNiceHandler で使うことを想定したサービス
-// // 指定 ID の記事のいいね数を+1 して、結果を返却
-// func (s *MyAppService) PostNiceService(todo models.Todo) (models.Todo, error) {
-// 	todoID := todo.ID
-// 	err := repositories.UpdateNiceNum(s.db, todoID)
-// 	if err != nil {
-// 		if errors.Is(err, sql.ErrNoRows) {
-// 			err = apperrors.NoTargetData.Wrap(err, "does not exist target data")
-// 			return models.Todo{}, err
-// 		}
-// 		err = apperrors.UpdateDataFailed.Wrap(err, "fail to update nice count")
-// 		return models.Todo{}, err
-// 	}
-// 	newTodo, err := repositories.SelectTodoDetail(s.db, todoID)
-// 	if err != nil {
-// 		return models.Todo{}, err
-// 	}
-// 	return newTodo, nil
-// }
+// PostNiceHandler で使うことを想定したサービス
+// 指定 ID の記事のいいね数を+1 して、結果を返却
+func (s *MyAppService) PostNiceService(todo models.Todo) (models.Todo, error) {
+	todoID := todo.ID
+	err := repositories.UpdateNiceNum(s.db, int(todoID))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = apperrors.NoTargetData.Wrap(err, "does not exist target data")
+			return models.Todo{}, err
+		}
+		err = apperrors.UpdateDataFailed.Wrap(err, "fail to update nice count")
+		return models.Todo{}, err
+	}
+	newTodo, err := repositories.SelectTodoDetail(s.db, int(todoID))
+	if err != nil {
+		return models.Todo{}, err
+	}
+	return newTodo, nil
+}

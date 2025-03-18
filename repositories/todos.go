@@ -73,40 +73,36 @@ func SelectTodoDetail(db *gorm.DB, todoID int) (models.Todo, error) {
 	return todo, nil
 }
 
-// // いいねの数を update する関数
-// // -> 発生したエラーを返り値にする
-// func UpdateNiceNum(db *gorm.DB, todoID int) error {
-// 	const sqlGetNice = `
-// 	select nice
-// 	from todos
-// 	where todo_id = ?;
-// 	`
-// 	const sqlUpdateNice = `update todos set nice = ? where todo_id = ?`
+// いいねの数を update する関数
+// -> 発生したエラーを返り値にする
+func UpdateNiceNum(db *gorm.DB, todoID int) error {
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
 
-// 	tx, err := db.Begin()
-// 	if err != nil {
-// 		return err
-// 	}
+	if err := tx.Error; err != nil {
+		return err
+	}
 
-// 	row := tx.QueryRow(sqlGetNice, todoID)
-// 	if err := row.Err(); err != nil {
-// 		tx.Rollback()
-// 		return err
-// 	}
+	// 既存のTodoをIDで取得
+	var todo models.Todo
+	if err := tx.First(&todo, todoID).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
 
-// 	var nicenum int
-// 	err = row.Scan(&nicenum)
-// 	if err != nil {
-// 		tx.Rollback()
-// 		return err
-// 	}
+	// いいね数をインクリメント
+	todo.NiceNum++
 
-// 	_, err = tx.Exec(sqlUpdateNice, nicenum+1, todoID)
-// 	if err != nil {
-// 		tx.Rollback()
-// 		return err
-// 	}
+	// 更新したTodoをデータベースに保存
+	if err := tx.Save(&todo).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
 
-// 	tx.Commit()
-// 	return nil
-// }
+	tx.Commit()
+	return nil
+}

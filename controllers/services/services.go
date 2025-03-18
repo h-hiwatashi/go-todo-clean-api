@@ -7,7 +7,7 @@ type TodoServicer interface {
 	PostTodoService(todo models.Todo) (models.Todo, error)
 	// GetTodoListService(page int) ([]models.Todo, error)
 	GetTodoService(todoID int) (models.Todo, error)
-	// PostNiceService(todo models.Todo) (models.Todo, error)
+	PostNiceService(todo models.Todo) (models.Todo, error)
 }
 
 // /comment を引き受けるサービス

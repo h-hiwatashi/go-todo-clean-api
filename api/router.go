@@ -21,7 +21,7 @@ func NewRouter(db *gorm.DB) *mux.Router {
 	r.HandleFunc("/todo", aCon.PostTodoHandler).Methods(http.MethodPost)
 	// r.HandleFunc("/todo/list", aCon.TodoListHandler).Methods(http.MethodGet)
 	r.HandleFunc("/todo/{id:[0-9]}", aCon.TodoDetailHandler).Methods(http.MethodGet)
-	// r.HandleFunc("/todo/nice", aCon.PostNiceHandler).Methods(http.MethodPost)
+	r.HandleFunc("/todo/nice", aCon.PostNiceHandler).Methods(http.MethodPost)
 	// r.HandleFunc("/comment", cCon.PostCommentHandler).Methods(http.MethodPost)
 
 	return r
