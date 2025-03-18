@@ -2,10 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"io"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/h-hiwatashi/go-todo-clean-api/apperrors"
 	"github.com/h-hiwatashi/go-todo-clean-api/models"
 
@@ -88,25 +90,24 @@ func (c *TodoController) PostTodoHandler(w http.ResponseWriter, req *http.Reques
 	json.NewEncoder(w).Encode(todo)
 }
 
-// // GET /todo/:id
-// func (c *TodoController) TodoDetailHandler(w http.ResponseWriter, req *http.Request) {
-// 	// todoID という変数に、リクエストの URL から取得した id パラメータを格納
-// 	// strconv.Atoi で文字列を数値に変換
-// 	todoID, err := strconv.Atoi(mux.Vars(req)["id"])
-// 	if err != nil {
-// 		err = apperrors.BadParam.Wrap(err, "queryparam must be number")
-// 		// 400 番エラー (BadRequest) を返す
-// 		apperrors.ErrorHandler(w, req, err)
-// 		return
-// 	}
+// GET /todo/:id
+func (c *TodoController) TodoDetailHandler(w http.ResponseWriter, req *http.Request) {
+	// strconv.Atoi で文字列を数値に変換
+	todoID, err := strconv.Atoi(mux.Vars(req)["id"])
+	if err != nil {
+		err = apperrors.BadParam.Wrap(err, "queryparam must be number")
+		// 400 番エラー (BadRequest) を返す
+		apperrors.ErrorHandler(w, req, err)
+		return
+	}
 
-// 	todo, err := c.service.GetTodoService(todoID)
-// 	if err != nil {
-// 		apperrors.ErrorHandler(w, req, err)
-// 		return
-// 	}
-// 	json.NewEncoder(w).Encode(todo)
-// }
+	todo, err := c.service.GetTodoService(todoID)
+	if err != nil {
+		apperrors.ErrorHandler(w, req, err)
+		return
+	}
+	json.NewEncoder(w).Encode(todo)
+}
 
 // // POST /todo/nice の挙動確認用
 // func (c *TodoController) PostNiceHandler(w http.ResponseWriter, req *http.Request) {

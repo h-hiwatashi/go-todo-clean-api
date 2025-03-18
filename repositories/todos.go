@@ -60,21 +60,18 @@ func InsertTodo(db *gorm.DB, todo models.Todo) (models.Todo, error) {
 // 	return todoArray, nil
 // }
 
-// // 投稿 ID を指定して、記事データを取得する関数
-// // -> 取得した記事データと、発生したエラーを返り値にする
-// func SelectTodoDetail(db *gorm.DB, todoID int) (models.Todo, error) {
-// 	const sqlStr = `  select *  from todos  where todo_id =?;  `
-// 	row := db.QueryRow(sqlStr, todoID)
-// 	if err := row.Err(); err != nil {
-// 		return models.Todo{}, err
-// 	}
-// 	var todo models.Todo
-// 	err := row.Scan(&todo.ID, &todo.Title, &todo.Contents, &todo.UserName, &todo.NiceNum, &todo.CreatedAt)
-// 	if err != nil {
-// 		return models.Todo{}, err
-// 	}
-// 	return todo, nil
-// }
+// 投稿 ID を指定して、記事データを取得する関数
+// -> 取得した記事データと、発生したエラーを返り値にする
+func SelectTodoDetail(db *gorm.DB, todoID int) (models.Todo, error) {
+	var todo models.Todo
+
+	res := db.First(&todo, todoID)
+	if err := res.Error; err != nil {
+		return models.Todo{}, err
+	}
+
+	return todo, nil
+}
 
 // // いいねの数を update する関数
 // // -> 発生したエラーを返り値にする

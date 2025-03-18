@@ -1,34 +1,37 @@
 package services
 
 import (
+	"database/sql"
+	"errors"
+
 	"github.com/h-hiwatashi/go-todo-clean-api/apperrors"
 	"github.com/h-hiwatashi/go-todo-clean-api/models"
 	"github.com/h-hiwatashi/go-todo-clean-api/repositories"
 )
 
 // 指定IDの記事をDBから取得する関数
-// func (s *MyAppService) GetTodoService(todoID int) (models.Todo, error) {
-// 	todo, err := repositories.SelectTodoDetail(s.db, todoID)
-// 	if err != nil {
-// 		if errors.Is(err, sql.ErrNoRows) {
-// 			err = apperrors.NAData.Wrap(err, "no data")
-// 			return models.Todo{}, err
-// 		}
-// 		err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
-// 		return models.Todo{}, err
-// 	}
+func (s *MyAppService) GetTodoService(todoID int) (models.Todo, error) {
+	todo, err := repositories.SelectTodoDetail(s.db, todoID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = apperrors.NAData.Wrap(err, "no data")
+			return models.Todo{}, err
+		}
+		err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
+		return models.Todo{}, err
+	}
 
-// 	// SelectTodoDetail 関数では「指定 ID 記事に紐づいたコメント一覧」までは取得できないため、
-// 	// SelectCommentList 関数を実行する
-// 	commentList, err := repositories.SelectCommentList(s.db, todoID)
-// 	if err != nil {
-// 		err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
-// 		return models.Todo{}, err
-// 	}
+	// SelectTodoDetail 関数では「指定 ID 記事に紐づいたコメント一覧」までは取得できないため、
+	// SelectCommentList 関数を実行する
+	commentList, err := repositories.SelectCommentList(s.db, todoID)
+	if err != nil {
+		err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
+		return models.Todo{}, err
+	}
 
-// 	todo.CommentList = append(todo.CommentList, commentList...)
-// 	return todo, nil
-// }
+	todo.CommentList = append(todo.CommentList, commentList...)
+	return todo, nil
+}
 
 // PostTodoHandler で使うことを想定したサービス
 // 引数の情報をもとに新しい記事を作り、結果を返却

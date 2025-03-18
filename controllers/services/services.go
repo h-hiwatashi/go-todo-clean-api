@@ -6,7 +6,7 @@ import "github.com/h-hiwatashi/go-todo-clean-api/models"
 type TodoServicer interface {
 	PostTodoService(todo models.Todo) (models.Todo, error)
 	// GetTodoListService(page int) ([]models.Todo, error)
-	// GetTodoService(todoID int) (models.Todo, error)
+	GetTodoService(todoID int) (models.Todo, error)
 	// PostNiceService(todo models.Todo) (models.Todo, error)
 }
 
