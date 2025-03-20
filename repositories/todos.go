@@ -73,6 +73,17 @@ func SelectTodoDetail(db *gorm.DB, todoID int) (models.Todo, error) {
 	return todo, nil
 }
 
+func DeleteTodo(db *gorm.DB, todoID int) error {
+	var todo models.Todo
+
+	res := db.Delete(&todo, todoID)
+	if err := res.Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // いいねの数を update する関数
 // -> 発生したエラーを返り値にする
 func UpdateNiceNum(db *gorm.DB, todoID int) error {

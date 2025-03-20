@@ -62,6 +62,20 @@ func (s *MyAppService) PostTodoService(todo models.Todo) (models.Todo, error) {
 // 	return todoList, nil
 // }
 
+// 指定IDのTODOをDBから論理削除する関数
+func (s *MyAppService) DeleteTodoService(todoID int) error {
+	err := repositories.DeleteTodo(s.db, todoID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			err = apperrors.NAData.Wrap(err, "no data")
+			return err
+		}
+		err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
+		return err
+	}
+	return nil
+}
+
 // PostNiceHandler で使うことを想定したサービス
 // 指定 ID の記事のいいね数を+1 して、結果を返却
 func (s *MyAppService) PostNiceService(todo models.Todo) (models.Todo, error) {

@@ -7,6 +7,7 @@ type TodoServicer interface {
 	PostTodoService(todo models.Todo) (models.Todo, error)
 	// GetTodoListService(page int) ([]models.Todo, error)
 	GetTodoService(todoID int) (models.Todo, error)
+	DeleteTodoService(todoID int) error
 	PostNiceService(todo models.Todo) (models.Todo, error)
 }
 

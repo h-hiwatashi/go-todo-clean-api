@@ -109,6 +109,28 @@ func (c *TodoController) TodoDetailHandler(w http.ResponseWriter, req *http.Requ
 	json.NewEncoder(w).Encode(todo)
 }
 
+// DELETE /todo/:id
+func (c *TodoController) DeleteTodoHandler(w http.ResponseWriter, req *http.Request) {
+	// strconv.Atoi で文字列を数値に変換
+	todoID, err := strconv.Atoi(mux.Vars(req)["id"])
+	if err != nil {
+		err = apperrors.BadParam.Wrap(err, "queryparam must be number")
+		// 400 番エラー (BadRequest) を返す
+		apperrors.ErrorHandler(w, req, err)
+		return
+	}
+
+	err = c.service.DeleteTodoService(todoID)
+	if err != nil {
+		apperrors.ErrorHandler(w, req, err)
+		return
+	}
+
+	// 204 No Content は、リクエストが成功したが、返すデータがない場合に使うステータスコード
+	w.WriteHeader(http.StatusNoContent)
+	json.NewEncoder(w).Encode("success")
+}
+
 // POST /todo/nice の挙動確認用
 func (c *TodoController) PostNiceHandler(w http.ResponseWriter, req *http.Request) {
 	var reqTodo models.Todo

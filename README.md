@@ -13,3 +13,7 @@ TODO List API
 | PATCH /todo/{id}  | 指定 ID の todo を更新する | todo の内容                  |
 | POST /todo/nice   | todo にいいねをつける      | いいねをつけた todo の内容   | ✅   |
 | POST /comment     | コメントを投稿する         | 投稿に成功したコメントの内容 |
+
+## 初回開発時コマンド
+
+brew install openapi-generator
