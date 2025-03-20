@@ -1,0 +1,453 @@
+openapi: 3.0.0
+servers:
+  - url: "http://todostore.swagger.io/v2"
+info:
+  description: >-
+    Go Todo Clean API.
+  version: 1.0.0
+  title: OpenAPI Go Todo Clean API
+  license:
+    name: Apache-2.0
+    url: "https://www.apache.org/licenses/LICENSE-2.0.html"
+tags:
+  - name: todo
+    description: Operations about todo
+  - name: user
+    description: Operations about user
+paths:
+  /todo:
+    post:
+      tags:
+        - todo
+      summary: Add a new todo to the store
+      description: ""
+      operationId: addTodo
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+        "405":
+          description: Invalid input
+      security:
+        - todostore_auth:
+            - "write:todos"
+            - "read:todos"
+      requestBody:
+        $ref: "#/components/requestBodies/Todo"
+    put:
+      tags:
+        - todo
+      summary: Update an existing todo
+      description: ""
+      operationId: updateTodo
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Todo not found
+        "405":
+          description: Validation exception
+      security:
+        - todostore_auth:
+            - "write:todos"
+            - "read:todos"
+      requestBody:
+        $ref: "#/components/requestBodies/Todo"
+  "/todo/{todoId}":
+    get:
+      tags:
+        - todo
+      summary: Find todo by ID
+      description: Returns a single todo
+      operationId: getTodoById
+      parameters:
+        - name: todoId
+          in: path
+          description: ID of todo to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Todo not found
+      security:
+        - api_key: []
+    post:
+      tags:
+        - todo
+      summary: Updates a todo in the store with form data
+      description: ""
+      operationId: updateTodoWithForm
+      parameters:
+        - name: todoId
+          in: path
+          description: ID of todo that needs to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "405":
+          description: Invalid input
+      security:
+        - todostore_auth:
+            - "write:todos"
+            - "read:todos"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Updated name of the todo
+                  type: string
+                status:
+                  description: Updated status of the todo
+                  type: string
+    delete:
+      tags:
+        - todo
+      summary: Deletes a todo
+      description: ""
+      operationId: deleteTodo
+      parameters:
+        - name: api_key
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: todoId
+          in: path
+          description: Todo id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Invalid todo value
+      security:
+        - todostore_auth:
+            - "write:todos"
+            - "read:todos"
+  # /user:
+  #   post:
+  #     tags:
+  #       - user
+  #     summary: Create user
+  #     description: This can only be done by the logged in user.
+  #     operationId: createUser
+  #     responses:
+  #       default:
+  #         description: successful operation
+  #     security:
+  #       - api_key: []
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/User"
+  #       description: Created user object
+  #       required: true
+
+  # /user/login:
+  #   get:
+  #     tags:
+  #       - user
+  #     summary: Logs user into the system
+  #     description: ""
+  #     operationId: loginUser
+  #     parameters:
+  #       - name: username
+  #         in: query
+  #         description: The user name for login
+  #         required: true
+  #         schema:
+  #           type: string
+  #           pattern: '^[a-zA-Z0-9]+[a-zA-Z0-9\.\-_]*[a-zA-Z0-9]+$'
+  #       - name: password
+  #         in: query
+  #         description: The password for login in clear text
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         headers:
+  #           Set-Cookie:
+  #             description: >-
+  #               Cookie authentication key for use with the `api_key`
+  #               apiKey authentication.
+  #             schema:
+  #               type: string
+  #               example: AUTH_KEY=abcde12345; Path=/; HttpOnly
+  #           X-Rate-Limit:
+  #             description: calls per hour allowed by the user
+  #             schema:
+  #               type: integer
+  #               format: int32
+  #           X-Expires-After:
+  #             description: date in UTC when token expires
+  #             schema:
+  #               type: string
+  #               format: date-time
+  #         content:
+  #           application/xml:
+  #             schema:
+  #               type: string
+  #           application/json:
+  #             schema:
+  #               type: string
+  #       "400":
+  #         description: Invalid username/password supplied
+  # /user/logout:
+  #   get:
+  #     tags:
+  #       - user
+  #     summary: Logs out current logged in user session
+  #     description: ""
+  #     operationId: logoutUser
+  #     responses:
+  #       default:
+  #         description: successful operation
+  #     security:
+  #       - api_key: []
+  # "/user/{username}":
+  #   get:
+  #     tags:
+  #       - user
+  #     summary: Get user by user name
+  #     description: ""
+  #     operationId: getUserByName
+  #     parameters:
+  #       - name: username
+  #         in: path
+  #         description: The name that needs to be fetched. Use user1 for testing.
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "200":
+  #         description: successful operation
+  #         content:
+  #           application/xml:
+  #             schema:
+  #               $ref: "#/components/schemas/User"
+  #           application/json:
+  #             schema:
+  #               $ref: "#/components/schemas/User"
+  #       "400":
+  #         description: Invalid username supplied
+  #       "404":
+  #         description: User not found
+  #   put:
+  #     tags:
+  #       - user
+  #     summary: Updated user
+  #     description: This can only be done by the logged in user.
+  #     operationId: updateUser
+  #     parameters:
+  #       - name: username
+  #         in: path
+  #         description: name that need to be deleted
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "400":
+  #         description: Invalid user supplied
+  #       "404":
+  #         description: User not found
+  #     security:
+  #       - api_key: []
+  #     requestBody:
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/User"
+  #       description: Updated user object
+  #       required: true
+  #   delete:
+  #     tags:
+  #       - user
+  #     summary: Delete user
+  #     description: This can only be done by the logged in user.
+  #     operationId: deleteUser
+  #     parameters:
+  #       - name: username
+  #         in: path
+  #         description: The name that needs to be deleted
+  #         required: true
+  #         schema:
+  #           type: string
+  #     responses:
+  #       "400":
+  #         description: Invalid username supplied
+  #       "404":
+  #         description: User not found
+  #     security:
+  #       - api_key: []
+components:
+  requestBodies:
+    # UserArray:
+    #   content:
+    #     application/json:
+    #       schema:
+    #         type: array
+    #         items:
+    #           $ref: "#/components/schemas/User"
+    #   description: List of user object
+    #   required: true
+    Todo:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Todo"
+        application/xml:
+          schema:
+            $ref: "#/components/schemas/Todo"
+      description: Todo object that needs to be added to the store
+      required: true
+  securitySchemes:
+    todostore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: "http://todostore.swagger.io/api/oauth/dialog"
+          scopes:
+            "write:todos": modify todos in your account
+            "read:todos": read your todos
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+  schemas:
+    Order:
+      title: Todo Order
+      description: An order for a todos from the todo store
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        todoId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+        shipDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+        complete:
+          type: boolean
+          default: false
+      xml:
+        name: Order
+
+    User:
+      title: a User
+      description: A User who is purchasing from the todo store
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: integer
+          format: int32
+          description: User Status
+      xml:
+        name: User
+    Tag:
+      title: Todo Tag
+      description: A tag for a todo
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      xml:
+        name: Tag
+    Todo:
+      title: a Todo
+      description: A todo for sale in the todo store
+      type: object
+      required:
+        - name
+        - photoUrls
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+          example: タイトル
+        # comment:
+        #   type: array
+        #   items:
+        #     type: string
+        contents:
+          type: string
+          example: content
+        user_name:
+          type: string
+          example: Test User
+        nice_num:
+          type: integer
+          format: int64
+    ApiResponse:
+      title: An uploaded response
+      description: Describes the result of uploading an image resource
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
