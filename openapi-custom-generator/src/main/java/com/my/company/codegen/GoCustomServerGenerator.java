@@ -58,7 +58,7 @@ public class GoCustomServerGenerator extends AbstractGoCodegen {
     @Setter protected String packageVersion = "1.0.0";
     @Setter protected int serverPort = 8080;
     protected String projectName = "openapi-server";
-    @Setter protected String sourceFolder = "go";
+    protected String sourceFolder = "app";
     protected Boolean corsFeatureEnabled = false;
     @Setter protected Boolean addResponseHeaders = false;
     @Setter protected Boolean outputAsLibrary = false;
@@ -149,18 +149,18 @@ public class GoCustomServerGenerator extends AbstractGoCodegen {
          * as with models, add multiple entries with different extensions for multiple files per
          * class
          */
-        apiTemplateFiles.put(
-                "controller-api.mustache",   // the template to use
-                ".go");       // the extension for each file to write
+        // apiTemplateFiles.put(
+        //         "controller-api.mustache",   // the template to use
+        //         ".go");       // the extension for each file to write
 
         /*
          * Service templates.  You can write services for each Api file with the apiTemplateFiles map.
             These services are skeletons built to implement the logic of your api using the
             expected parameters and response.
          */
-        apiTemplateFiles.put(
-                "service.mustache",   // the template to use
-                "_service.go");       // the extension for each file to write
+        // apiTemplateFiles.put(
+        //         "service.mustache",   // the template to use
+        //         "_service.go");       // the extension for each file to write
 
         /*
          * Template Location.  This is the location which templates will be read from.  The generator
@@ -271,7 +271,7 @@ public class GoCustomServerGenerator extends AbstractGoCodegen {
         }
         additionalProperties.put("routers", routers);
 
-        modelPackage = packageName;
+        modelPackage = "schema";
         apiPackage = packageName;
 
         /*
@@ -279,20 +279,20 @@ public class GoCustomServerGenerator extends AbstractGoCodegen {
          * entire object tree available.  If the input file has a suffix of `.mustache
          * it will be processed by the template engine.  Otherwise, it will be copied
          */
-        if (!outputAsLibrary) {
-            supportingFiles.add(new SupportingFile("main.mustache", "", "main.go"));
-            supportingFiles.add(new SupportingFile("Dockerfile.mustache", "", "Dockerfile"));
-            supportingFiles.add(new SupportingFile("go.mod.mustache", "", "go.mod"));
-        }
-        supportingFiles.add(new SupportingFile("openapi.mustache", "api", "openapi.yaml"));
-        supportingFiles.add(new SupportingFile("routers.mustache", sourceFolder, "routers.go"));
-        supportingFiles.add(new SupportingFile("logger.mustache", sourceFolder, "logger.go"));
-        supportingFiles.add(new SupportingFile("impl.mustache", sourceFolder, "impl.go"));
-        supportingFiles.add(new SupportingFile("helpers.mustache", sourceFolder, "helpers.go"));
-        supportingFiles.add(new SupportingFile("api.mustache", sourceFolder, "api.go"));
-        supportingFiles.add(new SupportingFile("error.mustache", sourceFolder, "error.go"));
-        supportingFiles.add(new SupportingFile("README.mustache", "", "README.md")
-                .doNotOverwrite());
+        // if (!outputAsLibrary) {
+        //     supportingFiles.add(new SupportingFile("main.mustache", "", "main.go"));
+        //     supportingFiles.add(new SupportingFile("Dockerfile.mustache", "", "Dockerfile"));
+        //     supportingFiles.add(new SupportingFile("go.mod.mustache", "", "go.mod"));
+        // }
+        // supportingFiles.add(new SupportingFile("openapi.mustache", "api", "openapi.yaml"));
+        supportingFiles.add(new SupportingFile("routers.mustache", sourceFolder + File.separator + "http", "routers.go"));
+        // supportingFiles.add(new SupportingFile("logger.mustache", sourceFolder, "logger.go"));
+        // supportingFiles.add(new SupportingFile("impl.mustache", sourceFolder, "impl.go"));
+        // supportingFiles.add(new SupportingFile("helpers.mustache", sourceFolder, "helpers.go"));
+        // supportingFiles.add(new SupportingFile("api.mustache", sourceFolder, "api.go"));
+        // supportingFiles.add(new SupportingFile("error.mustache", sourceFolder, "error.go"));
+        // supportingFiles.add(new SupportingFile("README.mustache", "", "README.md")
+        //         .doNotOverwrite());
     }
 
     @Override
@@ -477,7 +477,7 @@ public class GoCustomServerGenerator extends AbstractGoCodegen {
 
     @Override
     public String modelFileFolder() {
-        return outputFolder + File.separator + apiPackage().replace('.', File.separatorChar);
+        return outputFolder + File.separator + apiPackage().replace('.', File.separatorChar) + File.separator + "http" + File.separator + modelPackage();
     }
 
     public void setFeatureCORS(Boolean featureCORS) {
