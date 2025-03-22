@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["apperrors", "gofakeit", "gorm", "hiwatashi"]
+  "cSpell.words": [
+    "apperrors",
+    "codegen",
+    "gofakeit",
+    "gorm",
+    "hiwatashi",
+    "oapi"
+  ]
 }
