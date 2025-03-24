@@ -15,5 +15,3 @@ TODO List API
 | POST /comment     | コメントを投稿する         | 投稿に成功したコメントの内容 |
 
 ## 初回開発時コマンド
-
-brew install openapi-generator
