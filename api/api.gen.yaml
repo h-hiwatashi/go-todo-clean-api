@@ -1,0 +1,154 @@
+openapi: 3.0.0
+info:
+  title: Todo API
+  description: API for managing todo items
+  version: 1.0.0
+  contact:
+    name: h-hiwatashi
+servers:
+  - url: http://localhost:8080
+    description: Development server
+paths:
+  /hello:
+    get:
+      operationId: getHello
+      summary: Returns hello message
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+  /todo:
+    post:
+      operationId: createTodo
+      summary: Create a new todo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+  /todo/{id}:
+    get:
+      operationId: getTodoById
+      summary: Get a todo by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      operationId: deleteTodo
+      summary: Delete a todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: No content
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /todo/nice:
+    post:
+      operationId: incrementNice
+      summary: Increment nice count for a todo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoNiceRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    TodoRequest:
+      type: object
+      required:
+        - title
+        - contents
+        - username
+      properties:
+        title:
+          type: string
+        contents:
+          type: string
+        username:
+          type: string
+    TodoNiceRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+    Todo:
+      type: object
+      required:
+        - id
+        - title
+        - contents
+        - username
+        - nice_num
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        contents:
+          type: string
+        username:
+          type: string
+        nice_num:
+          type: integer
+    Error:
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
