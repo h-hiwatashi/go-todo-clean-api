@@ -2,12 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
-	"strconv"
 
 	"io"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/h-hiwatashi/go-todo-clean-api/apperrors"
 	"github.com/h-hiwatashi/go-todo-clean-api/models"
 
@@ -26,7 +24,7 @@ func NewTodoController(s services.TodoServicer) *TodoController {
 }
 
 // 他のパッケージからも参照可能な関数・変数・定数を作成するためには、その名前を大文字から始める必要があります
-func (c *TodoController) HelloHandler(w http.ResponseWriter, req *http.Request) {
+func (c *TodoController) GetHello(w http.ResponseWriter, req *http.Request) {
 	// if req.Method == http.MethodGet {
 	// 	io.WriteString(w, "Hello, world!\n")
 	// } else {
@@ -71,7 +69,7 @@ func (c *TodoController) HelloHandler(w http.ResponseWriter, req *http.Request) 
 // }
 
 // POST /todo のハンドラ
-func (c *TodoController) PostTodoHandler(w http.ResponseWriter, req *http.Request) {
+func (c *TodoController) CreateTodo(w http.ResponseWriter, req *http.Request) {
 	var reqTodo models.Todo
 	println(req.Body)
 	if err := json.NewDecoder(req.Body).Decode(&reqTodo); err != nil {
@@ -91,17 +89,8 @@ func (c *TodoController) PostTodoHandler(w http.ResponseWriter, req *http.Reques
 }
 
 // GET /todo/:id
-func (c *TodoController) TodoDetailHandler(w http.ResponseWriter, req *http.Request) {
-	// strconv.Atoi で文字列を数値に変換
-	todoID, err := strconv.Atoi(mux.Vars(req)["id"])
-	if err != nil {
-		err = apperrors.BadParam.Wrap(err, "queryparam must be number")
-		// 400 番エラー (BadRequest) を返す
-		apperrors.ErrorHandler(w, req, err)
-		return
-	}
-
-	todo, err := c.service.GetTodoService(todoID)
+func (c *TodoController) GetTodoById(w http.ResponseWriter, req *http.Request, id int) {
+	todo, err := c.service.GetTodoService(id)
 	if err != nil {
 		apperrors.ErrorHandler(w, req, err)
 		return
@@ -110,17 +99,8 @@ func (c *TodoController) TodoDetailHandler(w http.ResponseWriter, req *http.Requ
 }
 
 // DELETE /todo/:id
-func (c *TodoController) DeleteTodoHandler(w http.ResponseWriter, req *http.Request) {
-	// strconv.Atoi で文字列を数値に変換
-	todoID, err := strconv.Atoi(mux.Vars(req)["id"])
-	if err != nil {
-		err = apperrors.BadParam.Wrap(err, "queryparam must be number")
-		// 400 番エラー (BadRequest) を返す
-		apperrors.ErrorHandler(w, req, err)
-		return
-	}
-
-	err = c.service.DeleteTodoService(todoID)
+func (c *TodoController) DeleteTodo(w http.ResponseWriter, req *http.Request, id int) {
+	err := c.service.DeleteTodoService(id)
 	if err != nil {
 		apperrors.ErrorHandler(w, req, err)
 		return
@@ -132,7 +112,7 @@ func (c *TodoController) DeleteTodoHandler(w http.ResponseWriter, req *http.Requ
 }
 
 // POST /todo/nice の挙動確認用
-func (c *TodoController) PostNiceHandler(w http.ResponseWriter, req *http.Request) {
+func (c *TodoController) IncrementNice(w http.ResponseWriter, req *http.Request) {
 	var reqTodo models.Todo
 	if err := json.NewDecoder(req.Body).Decode(&reqTodo); err != nil {
 		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
