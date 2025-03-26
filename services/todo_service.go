@@ -45,22 +45,22 @@ func (s *MyAppService) PostTodoService(todo models.Todo) (models.Todo, error) {
 	return newTodo, nil
 }
 
-// // TodoListHandler で使うことを想定したサービス
-// // 指定 page の記事一覧を返却
-// func (s *MyAppService) GetTodoListService(page int) ([]models.Todo, error) {
-// 	todoList, err := repositories.SelectTodoList(s.db, page)
-// 	if err != nil {
-// 		err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
-// 		return nil, err
-// 	}
+// TodoListHandler で使うことを想定したサービス
+// 指定 page の記事一覧を返却
+func (s *MyAppService) GetTodoListService(page int) ([]models.Todo, error) {
+	todoList, err := repositories.SelectTodoList(s.db, page)
+	if err != nil {
+		err = apperrors.GetDataFailed.Wrap(err, "fail to get data")
+		return nil, err
+	}
 
-// 	if len(todoList) == 0 {
-// 		err := apperrors.NAData.Wrap(ErrNoData, "no data")
-// 		return nil, err
-// 	}
+	if len(todoList) == 0 {
+		err := apperrors.NAData.Wrap(ErrNoData, "no data")
+		return nil, err
+	}
 
-// 	return todoList, nil
-// }
+	return todoList, nil
+}
 
 // 指定IDのTODOをDBから論理削除する関数
 func (s *MyAppService) DeleteTodoService(todoID int) error {

@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"log"
+
 	"github.com/h-hiwatashi/go-todo-clean-api/models"
 	"gorm.io/gorm"
 )
@@ -35,30 +37,17 @@ func InsertTodo(db *gorm.DB, todo models.Todo) (models.Todo, error) {
 
 // 変数 page で指定されたページに表示する投稿一覧をデータベースから取得する関数
 // -> 取得した記事データと、発生したエラーを返り値にする
-// func SelectTodoList(db *gorm.DB, page int) ([]models.Todo, error) {
-// 	const sqlStr = `
-// 		select todo_id, title, contents, username, nice
-// 		from todos
-// 		limit ? offset ?;
-// 	`
-
-// 	rows, err := db.Query(sqlStr, todoNumPerPage, ((page - 1) * todoNumPerPage))
-// 	if err != nil {
-// 		log.Printf("Error db.Query: %v\n", err)
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
-
-// 	todoArray := make([]models.Todo, 0)
-// 	for rows.Next() {
-// 		var todo models.Todo
-// 		rows.Scan(&todo.ID, &todo.Title, &todo.Contents, &todo.UserName, &todo.NiceNum)
-
-// 		todoArray = append(todoArray, todo)
-// 	}
-
-// 	return todoArray, nil
-// }
+func SelectTodoList(db *gorm.DB, page int) ([]models.Todo, error) {
+	var todos []models.Todo
+	offset := (page - 1) * todoNumPerPage
+	// rows, err := db.Query(sqlStr, todoNumPerPage, offset)
+	result := db.Limit(todoNumPerPage).Offset(offset).Find(&todos)
+	if result.Error != nil {
+		log.Printf("Error db.Query: %v\n", result.Error)
+		return nil, result.Error
+	}
+	return todos, nil
+}
 
 // 投稿 ID を指定して、記事データを取得する関数
 // -> 取得した記事データと、発生したエラーを返り値にする
