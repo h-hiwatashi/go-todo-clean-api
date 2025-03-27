@@ -41,6 +41,23 @@ paths:
     get:
       operationId: getTodoList
       summary: Get a list of todos
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: The page number to retrieve
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+          description: The number of items per page
       responses:
         "200":
           description: OK

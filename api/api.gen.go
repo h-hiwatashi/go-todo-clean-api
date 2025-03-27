@@ -45,6 +45,15 @@ type TodoRequest struct {
 	Username string `json:"username"`
 }
 
+// GetTodoListParams defines parameters for GetTodoList.
+type GetTodoListParams struct {
+	// Page The page number to retrieve
+	Page *int `form:"page,omitempty" json:"page,omitempty"`
+
+	// PageSize The number of items per page
+	PageSize *int `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+}
+
 // CreateTodoJSONRequestBody defines body for CreateTodo for application/json ContentType.
 type CreateTodoJSONRequestBody = TodoRequest
 
@@ -61,7 +70,7 @@ type ServerInterface interface {
 	CreateTodo(w http.ResponseWriter, r *http.Request)
 	// Get a list of todos
 	// (GET /todo/list)
-	GetTodoList(w http.ResponseWriter, r *http.Request)
+	GetTodoList(w http.ResponseWriter, r *http.Request, params GetTodoListParams)
 	// Increment nice count for a todo
 	// (POST /todo/nice)
 	IncrementNice(w http.ResponseWriter, r *http.Request)
@@ -113,8 +122,29 @@ func (siw *ServerInterfaceWrapper) CreateTodo(w http.ResponseWriter, r *http.Req
 // GetTodoList operation middleware
 func (siw *ServerInterfaceWrapper) GetTodoList(w http.ResponseWriter, r *http.Request) {
 
+	var err error
+
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetTodoListParams
+
+	// ------------- Optional query parameter "page" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "page", r.URL.Query(), &params.Page)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "page", Err: err})
+		return
+	}
+
+	// ------------- Optional query parameter "pageSize" -------------
+
+	err = runtime.BindQueryParameter("form", true, false, "pageSize", r.URL.Query(), &params.PageSize)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "pageSize", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetTodoList(w, r)
+		siw.Handler.GetTodoList(w, r, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -319,18 +349,19 @@ func HandlerWithOptions(si ServerInterface, options GorillaServerOptions) http.H
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
