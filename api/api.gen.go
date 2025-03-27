@@ -59,6 +59,9 @@ type ServerInterface interface {
 	// Create a new todo
 	// (POST /todo)
 	CreateTodo(w http.ResponseWriter, r *http.Request)
+	// Get a list of todos
+	// (GET /todo/list)
+	GetTodoList(w http.ResponseWriter, r *http.Request)
 	// Increment nice count for a todo
 	// (POST /todo/nice)
 	IncrementNice(w http.ResponseWriter, r *http.Request)
@@ -98,6 +101,20 @@ func (siw *ServerInterfaceWrapper) CreateTodo(w http.ResponseWriter, r *http.Req
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.CreateTodo(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// GetTodoList operation middleware
+func (siw *ServerInterfaceWrapper) GetTodoList(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.GetTodoList(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -288,6 +305,8 @@ func HandlerWithOptions(si ServerInterface, options GorillaServerOptions) http.H
 
 	r.HandleFunc(options.BaseURL+"/todo", wrapper.CreateTodo).Methods("POST")
 
+	r.HandleFunc(options.BaseURL+"/todo/list", wrapper.GetTodoList).Methods("GET")
+
 	r.HandleFunc(options.BaseURL+"/todo/nice", wrapper.IncrementNice).Methods("POST")
 
 	r.HandleFunc(options.BaseURL+"/todo/{id}", wrapper.DeleteTodo).Methods("DELETE")
@@ -300,17 +319,18 @@ func HandlerWithOptions(si ServerInterface, options GorillaServerOptions) http.H
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+SVTW/UMBCG/4o1cAxNgB6q3FqKygqpVIVbVSHXnt24SmzXnrSsVvnvyHazH0m2IFE+",
-	"JE67cuyZd57xO16BMI01GjV5KFfgRYUNj3/fO2dc+GOdsehIYVwWRmL4paVFKEFpwgU66DJo0Hu+2P7o",
-	"ySm9gK7LwOFdqxxKKK/WG7MU7Drr95ubWxQUYn0x0kzl1tQrHaTIQMlpWVoJ/KrbZvorKapxMl7r0Wne",
-	"/EQ9SkIfKNto3IqwJWJfsedK4CXetehpXPd0aWMV+4LvDfwk0OdA8xSVsdpwWum56aVxETWnVFC9qtQD",
-	"J+4rFURI9MIpS8poKOH4YsbmxrGGa75QesHISMMUYePXzSkjDHZ8MYMM7tH5dPT1QXFQhIjGouZWQQlv",
-	"41IGllMV4eQV1nXUtcCoKVDkIfdMQglnSB/ihlC9t0b7xPdNUWxhjrjwG+W25kpv7DaFcVTg51YI9D4S",
-	"9m3TcLeEEi6RWqc9i/JYb6ywJ6feQsZPKH7nkBNGm6WOoacTI5cDudzaWol4LL/1ZiD6pcM5lPAi3wyR",
-	"/HGC5Nv3rtu9FuRa7H5I6tdSTyH89HFAL0FgnGl8iBdmQy4Pjt2Pb6aFwwY1Bd/+RoLbY+EfopjBYXH4",
-	"bJnSSzOR6twQm5tWy0Hf1vRZ6BITptUU3c+HXVwp2YX0EmskHPfxNK4/2sByxxskdB7KqxUEi8YJEOZ3",
-	"GkFx0u+2IBubeDOhr0f9OUxqdqtkPca/DTbhWGPM9k67QOxkOZN/iNp/cavPkB7Js5slm52msx7dfc92",
-	"N84p3mNtbPRB2hVeV1eHp5LIlnleG8Hryngqj4qjArrr7nsAAAD//02uYsHwCQAA",
+	"H4sIAAAAAAAC/+SWzW7bOBDHX4WY3aM20u7mEOiWNEVqtEiDtLcgKBhybDGQSIYcJTUMvXtBMrJlS04D",
+	"JP0AerIhDWf+85sPagXCNNZo1OShXIEXFTY8/n3rnHHhj3XGoiOF8bEwEsMvLS1CCUoTLtBBl0GD3vPF",
+	"8KUnp/QCui4Dh3etciihvFobZsnZddbbm5tbFBR8fTbSTMXW1CvdCZGBktOytBL4RbfN9FtSVOOkv9aj",
+	"07x5Rj5KQu8o22gceBiI2JfsuRJ4iXctehrnPZ3aWMU+53sdPwn0NdA8RWWsNpxWem56aVxEzSkUVP9U",
+	"6oET95UKIiR64ZQlZTSUcHwxY3PjWMM1Xyi9YGSkYYqw8evilBEGO76YQQb36Hw6+u9BcVAEj8ai5lZB",
+	"Cf/HRxlYTlWEk1dY11HXAqOmQJGH2DMJJZwhvYsGIXtvjfaJ739FMcAcceFXym3Nld6M2xTGUYKfWiHQ",
+	"+0jYt03D3RJKuERqnfYsymP9YAWbnPoRMn5C8RuHnDCOWaoYejoxcrkjl1tbKxGP5bfe7Ij+2+EcSvgr",
+	"3yyR/HGD5MO+67bbglyL3XdJvSz0FMKP73foJQiMM40PsWE25PJaJWz76h2CfAg2L0wkteizMlrPC3eO",
+	"L5+V4RkS4yzkwsw8pugHOYattL9FZlo4bFBT2E0/sEuGq+836pQMDovDV4uUbtOJUOeG2Ny0Wu5Ubk2f",
+	"hSoxYVpNccPx3U5dKdmF8BJrJBzX8TQ+fxx1yx1vkNB5KK9WENZQ3HLhjkprNt5m2yXIxotqcwtdj+pz",
+	"mNRsZ8l6jL8abMKxxpg9OeEny5n8SdT+iK5O+yjezTdLNjtNZz26+57ttp9TvMfa2DgHySp8Qbg6fA4Q",
+	"2TLPayN4XRlP5VFxVEB33X0LAAD//wyrmUXUCgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
