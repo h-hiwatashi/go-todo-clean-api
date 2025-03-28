@@ -50,8 +50,8 @@ type GetTodoListParams struct {
 	// Page The page number to retrieve
 	Page *int `form:"page,omitempty" json:"page,omitempty"`
 
-	// PageSize The number of items per page
-	PageSize *int `form:"pageSize,omitempty" json:"pageSize,omitempty"`
+	// Size The number of items per page
+	Size *int `form:"size,omitempty" json:"size,omitempty"`
 }
 
 // CreateTodoJSONRequestBody defines body for CreateTodo for application/json ContentType.
@@ -135,11 +135,11 @@ func (siw *ServerInterfaceWrapper) GetTodoList(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	// ------------- Optional query parameter "pageSize" -------------
+	// ------------- Optional query parameter "size" -------------
 
-	err = runtime.BindQueryParameter("form", true, false, "pageSize", r.URL.Query(), &params.PageSize)
+	err = runtime.BindQueryParameter("form", true, false, "size", r.URL.Query(), &params.Size)
 	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "pageSize", Err: err})
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "size", Err: err})
 		return
 	}
 
@@ -349,19 +349,19 @@ func HandlerWithOptions(si ServerInterface, options GorillaServerOptions) http.H
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/h-hiwatashi/go-todo-clean-api/api"
 	"github.com/h-hiwatashi/go-todo-clean-api/models"
+	"github.com/h-hiwatashi/go-todo-clean-api/router"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -43,7 +43,7 @@ func main() {
 	}
 
 	// 4. コントローラ型 MyAppController のハンドラメソッドとパスとの関連付けを行う。
-	r := api.NewRouter(db)
+	r := router.NewRouter(db)
 
 	// サーバー起動時のログを出力
 	log.Println("server start at port 8080")
