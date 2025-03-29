@@ -13,13 +13,13 @@ npm i -g @redocly/cli@latest
 ## 分割された yml を一つに統合。
 
 ```
-redocly bundle api/root.yaml --output api/api.gen.yaml
+redocly bundle openapi/root.yaml --output openapi/api.gen.yaml
 ```
 
 or
 
 ```
-npx @redocly/cli bundle api/root.yaml --output api/api.gen.yaml
+npx @redocly/cli bundle openapi/root.yaml --output openapi/api.gen.yaml
 ```
 
 ## 公式のコマンド集

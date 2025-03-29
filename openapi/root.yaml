@@ -50,7 +50,7 @@ paths:
             default: 1
             minimum: 1
           description: The page number to retrieve
-        - name: size
+        - name: pageSize
           in: query
           required: false
           schema:
@@ -173,12 +173,4 @@ components:
         nice_num:
           type: integer
     Error:
-      type: object
-      required:
-        - message
-        - code
-      properties:
-        message:
-          type: string
-        code:
-          type: integer
+      $ref: "./components/schemas/Error.yaml#/Error"

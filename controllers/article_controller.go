@@ -6,9 +6,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/h-hiwatashi/go-todo-clean-api/api"
 	"github.com/h-hiwatashi/go-todo-clean-api/apperrors"
 	"github.com/h-hiwatashi/go-todo-clean-api/models"
+	"github.com/h-hiwatashi/go-todo-clean-api/openapi"
 
 	"github.com/h-hiwatashi/go-todo-clean-api/controllers/services"
 )
@@ -34,7 +34,7 @@ func (c *TodoController) GetHello(w http.ResponseWriter, req *http.Request) {
 // • page に対応する値が複数個送られてきた場合には、最初の値を使用する
 // • x が数字ではなかった場合には、リクエストについていたパラメータの値が悪いということなので 400 番エラーを返す
 // • クエリパラメータが URL についていなかった場合には、パラメータ page=1 がついていたときと同じ処理をする
-func (c *TodoController) GetTodoList(w http.ResponseWriter, req *http.Request, params api.GetTodoListParams) {
+func (c *TodoController) GetTodoList(w http.ResponseWriter, req *http.Request, params openapi.GetTodoListParams) {
 	// queryMap := req.URL.Query()
 
 	// // クエリパラメータpageを取得

@@ -1,0 +1,10 @@
+Error:
+  type: object
+  required:
+    - message
+    - code
+  properties:
+    message:
+      type: string
+    code:
+      type: integer

@@ -1,10 +1,10 @@
-package router
+package api
 
 import (
 	"net/http"
 
-	"github.com/h-hiwatashi/go-todo-clean-api/api"
 	"github.com/h-hiwatashi/go-todo-clean-api/controllers"
+	"github.com/h-hiwatashi/go-todo-clean-api/openapi"
 	"github.com/h-hiwatashi/go-todo-clean-api/services"
 	"gorm.io/gorm"
 )
@@ -16,7 +16,7 @@ func NewRouter(db *gorm.DB) http.Handler {
 	aCon := controllers.NewTodoController(ser)
 	// cCon := controllers.NewCommentController(ser)
 
-	r := api.Handler(aCon)
+	r := openapi.Handler(aCon)
 
 	return r
 }

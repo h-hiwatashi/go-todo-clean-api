@@ -1,0 +1,41 @@
+TodoRequest:
+  type: object
+  required:
+    - title
+    - contents
+    - username
+  properties:
+    title:
+      type: string
+    contents:
+      type: string
+    username:
+      type: string
+
+TodoNiceRequest:
+  type: object
+  required:
+    - id
+  properties:
+    id:
+      type: integer
+
+Todo:
+  type: object
+  required:
+    - id
+    - title
+    - contents
+    - username
+    - nice_num
+  properties:
+    id:
+      type: integer
+    title:
+      type: string
+    contents:
+      type: string
+    username:
+      type: string
+    nice_num:
+      type: integer

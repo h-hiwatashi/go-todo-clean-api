@@ -14,7 +14,7 @@ paths:
       operationId: getHello
       summary: Returns hello message
       responses:
-        "200":
+        '200':
           description: Success
           content:
             text/plain:
@@ -29,14 +29,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TodoRequest"
+              $ref: '#/components/schemas/TodoRequest'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Todo"
+                $ref: '#/components/schemas/Todo'
   /todo/list:
     get:
       operationId: getTodoList
@@ -59,14 +59,14 @@ paths:
             minimum: 1
           description: The number of items per page
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Todo"
+                  $ref: '#/components/schemas/Todo'
   /todo/{id}:
     get:
       operationId: getTodoById
@@ -78,18 +78,18 @@ paths:
           schema:
             type: integer
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Todo"
-        "404":
+                $ref: '#/components/schemas/Todo'
+        '404':
           description: Not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
     delete:
       operationId: deleteTodo
       summary: Delete a todo
@@ -100,14 +100,14 @@ paths:
           schema:
             type: integer
       responses:
-        "204":
+        '204':
           description: No content
-        "404":
+        '404':
           description: Not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
   /todo/nice:
     post:
       operationId: incrementNice
@@ -117,27 +117,68 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TodoNiceRequest"
+              $ref: '#/components/schemas/TodoNiceRequest'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Todo"
-        "404":
+                $ref: '#/components/schemas/Todo'
+        '404':
           description: Not found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     TodoRequest:
-      $ref: "../openapi/components/schemas/Todo.yaml#/TodoRequest"
+      type: object
+      required:
+        - title
+        - contents
+        - username
+      properties:
+        title:
+          type: string
+        contents:
+          type: string
+        username:
+          type: string
     TodoNiceRequest:
-      $ref: "../openapi/components/schemas/Todo.yaml#/TodoNiceRequest"
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
     Todo:
-      $ref: "../openapi/components/schemas/Todo.yaml#/Todo"
+      type: object
+      required:
+        - id
+        - title
+        - contents
+        - username
+        - nice_num
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        contents:
+          type: string
+        username:
+          type: string
+        nice_num:
+          type: integer
     Error:
-      $ref: "../openapi/components/schemas/Error.yaml#/Error"
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
