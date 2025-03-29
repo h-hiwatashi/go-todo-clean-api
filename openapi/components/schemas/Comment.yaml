@@ -1,0 +1,34 @@
+CommentRequest:
+  type: object
+  required:
+    - article_id
+    - message
+  properties:
+    article_id:
+      type: integer
+      description: ID of the article to comment on
+    message:
+      type: string
+      description: The comment text
+
+Comment:
+  type: object
+  required:
+    - id
+    - article_id
+    - message
+    - created_at
+  properties:
+    id:
+      type: integer
+      description: Comment ID
+    article_id:
+      type: integer
+      description: ID of the article the comment belongs to
+    message:
+      type: string
+      description: The comment text
+    created_at:
+      type: string
+      format: date-time
+      description: Timestamp when the comment was created

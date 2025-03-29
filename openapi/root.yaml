@@ -131,46 +131,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /comment:
+    post:
+      operationId: createComment
+      summary: Create a new comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 components:
   schemas:
     TodoRequest:
-      type: object
-      required:
-        - title
-        - contents
-        - username
-      properties:
-        title:
-          type: string
-        contents:
-          type: string
-        username:
-          type: string
+      $ref: "../openapi/components/schemas/Todo.yaml#/TodoRequest"
     TodoNiceRequest:
-      type: object
-      required:
-        - id
-      properties:
-        id:
-          type: integer
+      $ref: "../openapi/components/schemas/Todo.yaml#/TodoNiceRequest"
     Todo:
-      type: object
-      required:
-        - id
-        - title
-        - contents
-        - username
-        - nice_num
-      properties:
-        id:
-          type: integer
-        title:
-          type: string
-        contents:
-          type: string
-        username:
-          type: string
-        nice_num:
-          type: integer
+      $ref: "../openapi/components/schemas/Todo.yaml#/Todo"
+    CommentRequest:
+      $ref: "../openapi/components/schemas/Comment.yaml#/CommentRequest"
+    Comment:
+      $ref: "../openapi/components/schemas/Comment.yaml#/Comment"
     Error:
-      $ref: "./components/schemas/Error.yaml#/Error"
+      $ref: "../openapi/components/schemas/Error.yaml#/Error"

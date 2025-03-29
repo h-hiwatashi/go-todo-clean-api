@@ -131,6 +131,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /comment:
+    post:
+      operationId: createComment
+      summary: Create a new comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     TodoRequest:
@@ -172,6 +195,39 @@ components:
           type: string
         nice_num:
           type: integer
+    CommentRequest:
+      type: object
+      required:
+        - article_id
+        - message
+      properties:
+        article_id:
+          type: integer
+          description: ID of the article to comment on
+        message:
+          type: string
+          description: The comment text
+    Comment:
+      type: object
+      required:
+        - id
+        - article_id
+        - message
+        - created_at
+      properties:
+        id:
+          type: integer
+          description: Comment ID
+        article_id:
+          type: integer
+          description: ID of the article the comment belongs to
+        message:
+          type: string
+          description: The comment text
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the comment was created
     Error:
       type: object
       required:
