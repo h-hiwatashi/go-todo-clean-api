@@ -35,24 +35,6 @@ func (c *TodoController) GetHello(w http.ResponseWriter, req *http.Request) {
 // • x が数字ではなかった場合には、リクエストについていたパラメータの値が悪いということなので 400 番エラーを返す
 // • クエリパラメータが URL についていなかった場合には、パラメータ page=1 がついていたときと同じ処理をする
 func (c *TodoController) GetTodoList(w http.ResponseWriter, req *http.Request, params openapi.GetTodoListParams) {
-	// queryMap := req.URL.Query()
-
-	// // クエリパラメータpageを取得
-	// var page int
-	// /// もし map 型の変数 queryMap が文字列"page"をキーに持っているのであれば、p には pageキーに対応する値 queryMap["page"] が、ok には true が格納される
-	// /// もし map 型の変数 queryMap が文字列"page"をキーに持っていないのであれば、ok にはfalse が格納される
-	// if p, ok := queryMap["page"]; ok && len(p) > 0 {
-	// 	var err error
-	// 	page, err = strconv.Atoi(p[0])
-	// 	if err != nil {
-	// 		err = apperrors.BadParam.Wrap(err, "queryparam must be number")
-	// 		apperrors.ErrorHandler(w, req, err)
-	// 		return
-	// 	}
-	// } else {
-	// 	page = 1
-	// }
-
 	todoList, err := c.service.GetTodoListService(*params.Page)
 	if err != nil {
 		apperrors.ErrorHandler(w, req, err)
