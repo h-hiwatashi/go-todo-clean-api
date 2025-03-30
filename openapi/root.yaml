@@ -8,11 +8,18 @@ info:
 servers:
   - url: http://localhost:8080
     description: Development server
+tags:
+  - name: Todo
+    description: Todo Operation
+  - name: Comment
+    description: Comment Operation
 paths:
   /hello:
     get:
       operationId: getHello
       summary: Returns hello message
+      tags:
+        - Todo
       responses:
         "200":
           description: Success
@@ -24,6 +31,8 @@ paths:
     post:
       operationId: createTodo
       summary: Create a new todo
+      tags:
+        - Todo
       requestBody:
         required: true
         content:
@@ -41,6 +50,8 @@ paths:
     get:
       operationId: getTodoList
       summary: Get a list of todos
+      tags:
+        - Todo
       parameters:
         - name: page
           in: query
@@ -71,6 +82,8 @@ paths:
     get:
       operationId: getTodoById
       summary: Get a todo by ID
+      tags:
+        - Todo
       parameters:
         - name: id
           in: path
@@ -93,6 +106,8 @@ paths:
     delete:
       operationId: deleteTodo
       summary: Delete a todo
+      tags:
+        - Todo
       parameters:
         - name: id
           in: path
@@ -112,6 +127,8 @@ paths:
     post:
       operationId: incrementNice
       summary: Increment nice count for a todo
+      tags:
+        - Todo
       requestBody:
         required: true
         content:
@@ -135,6 +152,8 @@ paths:
     post:
       operationId: createComment
       summary: Create a new comment
+      tags:
+        - Comment
       requestBody:
         required: true
         content:

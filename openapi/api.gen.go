@@ -12,11 +12,36 @@ import (
 	"net/url"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gorilla/mux"
 	"github.com/oapi-codegen/runtime"
 )
+
+// Comment defines model for Comment.
+type Comment struct {
+	// ArticleId ID of the article the comment belongs to
+	ArticleId int `json:"article_id"`
+
+	// CreatedAt Timestamp when the comment was created
+	CreatedAt time.Time `json:"created_at"`
+
+	// Id Comment ID
+	Id int `json:"id"`
+
+	// Message The comment text
+	Message string `json:"message"`
+}
+
+// CommentRequest defines model for CommentRequest.
+type CommentRequest struct {
+	// ArticleId ID of the article to comment on
+	ArticleId int `json:"article_id"`
+
+	// Message The comment text
+	Message string `json:"message"`
+}
 
 // Error defines model for Error.
 type Error struct {
@@ -54,6 +79,9 @@ type GetTodoListParams struct {
 	PageSize *int `form:"pageSize,omitempty" json:"pageSize,omitempty"`
 }
 
+// CreateCommentJSONRequestBody defines body for CreateComment for application/json ContentType.
+type CreateCommentJSONRequestBody = CommentRequest
+
 // CreateTodoJSONRequestBody defines body for CreateTodo for application/json ContentType.
 type CreateTodoJSONRequestBody = TodoRequest
 
@@ -62,6 +90,9 @@ type IncrementNiceJSONRequestBody = TodoNiceRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Create a new comment
+	// (POST /comment)
+	CreateComment(w http.ResponseWriter, r *http.Request)
 	// Returns hello message
 	// (GET /hello)
 	GetHello(w http.ResponseWriter, r *http.Request)
@@ -90,6 +121,20 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(http.Handler) http.Handler
+
+// CreateComment operation middleware
+func (siw *ServerInterfaceWrapper) CreateComment(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.CreateComment(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
 
 // GetHello operation middleware
 func (siw *ServerInterfaceWrapper) GetHello(w http.ResponseWriter, r *http.Request) {
@@ -331,6 +376,8 @@ func HandlerWithOptions(si ServerInterface, options GorillaServerOptions) http.H
 		ErrorHandlerFunc:   options.ErrorHandlerFunc,
 	}
 
+	r.HandleFunc(options.BaseURL+"/comment", wrapper.CreateComment).Methods("POST")
+
 	r.HandleFunc(options.BaseURL+"/hello", wrapper.GetHello).Methods("GET")
 
 	r.HandleFunc(options.BaseURL+"/todo", wrapper.CreateTodo).Methods("POST")
@@ -349,19 +396,23 @@ func HandlerWithOptions(si ServerInterface, options GorillaServerOptions) http.H
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"AAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
