@@ -24,7 +24,7 @@ func NewCommentController(s services.CommentServicer) *CommentController {
 }
 
 // POST /comment
-func (c *CommentController) PostCommentHandler(w http.ResponseWriter, req *http.Request) {
+func (c *CommentController) CreateComment(w http.ResponseWriter, req *http.Request) {
 	var reqComment models.Comment
 	if err := json.NewDecoder(req.Body).Decode(&reqComment); err != nil {
 		err = apperrors.ReqBodyDecodeFailed.Wrap(err, "bad request body")
