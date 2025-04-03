@@ -14,9 +14,12 @@ func NewRouter(db *gorm.DB) http.Handler {
 	ser := services.NewMyAppService(db)
 	// 3. MyAppService 型をもとに、サーバー全体で使用するコントローラ構造体 MyAppControllerを一つ生成する
 	aCon := controllers.NewTodoController(ser)
-	// cCon := controllers.NewCommentController(ser)
+	cCon := controllers.NewCommentController(ser)
 
-	r := openapi.Handler(aCon)
+	// CombinedController を生成
+	con := controllers.NewMyAppController(aCon, cCon)
+
+	r := openapi.Handler(con)
 
 	return r
 }
